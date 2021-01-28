@@ -1,0 +1,9 @@
+# Python related
+__pycache__/
+venv/
+
+# Visual Studio Code
+.vscode
+
+# Flask instance directory
+instance/
