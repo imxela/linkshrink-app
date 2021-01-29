@@ -4,7 +4,7 @@ Flask==1.1.2
 gunicorn==20.0.4
 itsdangerous==1.1.0
 Jinja2==2.11.2
--e linkshrink-app==0.1.0
+-e linkshrink==0.1.0
 MarkupSafe==1.1.1
 mccabe==0.6.1
 pycodestyle==2.6.0
