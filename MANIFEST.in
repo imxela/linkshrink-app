@@ -1,0 +1,4 @@
+include linkshrink/schema.sql
+graft linkshrink/static
+graft linkshrink/templates
+global-exclude *.pyc

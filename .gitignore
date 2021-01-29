@@ -2,6 +2,9 @@
 __pycache__/
 venv/
 
+# Python setuptools
+*.egg-info
+
 # Visual Studio Code
 .vscode
 
