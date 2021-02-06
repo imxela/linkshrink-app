@@ -1,6 +1,9 @@
 import os
 
-from flask import Flask, request, redirect, abort
+from flask import Flask, request, redirect, abort, g
+
+from sqlalchemy import create_engine
+from sqlalchemy import Table, Column, Integer, String, MetaData, select, exists
 
 
 def has_no_empty_params(rule):
@@ -10,28 +13,28 @@ def has_no_empty_params(rule):
 
 
 # Factory function for creation and configuration of the app
-def create_app(test_config=None):
+def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    # Default development config
+    # Configuration values are loaded from environment values
+    # or in some cases set to a development default value
     app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'linkshrink.sqlite'),
+        SECRET_KEY=os.environ.get('SECRET_KEY') or 'dev',
+        DATABASE_URL=os.environ.get('DATABASE_URL'),
     )
 
-    # Differentiate between production and testing configs
-    if test_config is None:
-        # Load the production config when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # Load the passed test config
-        app.config.from_mapping(test_config)
+    print(app.config['DATABASE_URL'])
 
     # Create the instance folder
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    with app.app_context():
+        from . import database
+        database.create_database()
+        db = g.database
 
     # Intercepts all incoming URLs to check if they match a
     # registered route or a shortened URL. (Or none, in which case 404)
@@ -50,35 +53,27 @@ def create_app(test_config=None):
                 # Returning none will continue normal flow
                 return None
 
-        from linkshrink.db import get_db
-
         # Query for target url and redirect
-        target_url = ''
         stripped_url = request.path.strip('/')
 
-        db = get_db()
+        from . import database
+        database.create_database()
+        db = g.database
 
-        row = db.execute(
-            'SELECT target_url FROM url WHERE shrunk_url = ?',
-            (stripped_url,)
-        ).fetchone()
+        query = select([database.url.c.target_url]).where(database.url.c.shrunk_url == stripped_url)
+        result = db.execute(query).fetchone()
 
-        if row is not None:
+        if result is not None:
             # success, get row value target_url!
-            return redirect(row['target_url'], code=302)
+            return redirect(result[0], code=302)
         else:
             # Failed to find matching route or shrunk url
             print('Error: Invalid route or url: "{}"'.format(request.path))
             abort(404)
 
-        return redirect(target_url, code=302)
-
     @app.route('/')
     @app.route('/index')
     def index():
         return 'Hello, World!'
-
-    from . import db
-    db.init_app(app)
 
     return app
