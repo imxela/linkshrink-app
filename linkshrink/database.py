@@ -35,7 +35,7 @@ def create_testing_defaults():
             shrunk_url=default_shrunk_url, 
             target_url=default_target_url
         )
-        result = g.db.execute(insert_test)
+        result = g.database.execute(insert_test)
     else:
         print('Database defaults already exist.')
 
