@@ -33,47 +33,6 @@ def create_app():
 
     with app.app_context():
         from . import database
-        database.create_database()
-        db = g.database
-
-    # Intercepts all incoming URLs to check if they match a
-    # registered route or a shortened URL. (Or none, in which case 404)
-    @app.before_request
-    def shrunk_redirect():
-        print('Requested path: {}'.format(request.path))
-
-        # Ensure the current URL doesn't match any registered route
-        url_routes = []
-        for rule in app.url_map.iter_rules():
-            if "GET" in rule.methods and has_no_empty_params(rule):
-                url_routes.append(rule.rule)
-
-        for route in url_routes:
-            if route == request.path:
-                # Returning none will continue normal flow
-                return None
-
-        # Query for target url and redirect
-        stripped_url = request.path.strip('/')
-
-        from . import database
-        database.create_database()
-        db = g.database
-
-        query = select([database.url.c.target_url]).where(database.url.c.shrunk_url == stripped_url)
-        result = db.execute(query).fetchone()
-
-        if result is not None:
-            # success, get row value target_url!
-            return redirect(result[0], code=302)
-        else:
-            # Failed to find matching route or shrunk url
-            print('Error: Invalid route or url: "{}"'.format(request.path))
-            abort(404)
-
-    @app.route('/')
-    @app.route('/index')
-    def index():
-        return 'Hello, World!'
+        from . import routes
 
     return app
