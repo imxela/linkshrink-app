@@ -32,7 +32,7 @@ def create_testing_defaults():
     if result is False:
         print('Database defaults created!')
         insert_test = url.insert().values(
-            shrunk_url=default_shrunk_url, 
+            shrunk_url=default_shrunk_url,
             target_url=default_target_url
         )
         result = get_db().execute(insert_test)
@@ -66,12 +66,78 @@ def close_db(e):
 
 # Returns the 'target_url' associated with the specified 'shrunk_url'.
 # Returns 'default' if 'shrunk_url' does not exist in the database.
-def get_target_url(shrunk_url, default=None):
+def query_target_url(shrunk_url, default=None):
     query = select([url.c.target_url]).where(url.c.shrunk_url == shrunk_url)
     result = get_db().execute(query).fetchone()
-    # TODO: g.database does not exist here, why?
 
     if result is not None:
         return result[0]
 
     return default
+
+
+# Returns True if the 'target_url' exists in the database, False otherwise.
+def exists_target(target_url):
+    query = select([exists().where(url.c.target_url == target_url)])
+    result = get_db().execute(query).fetchone()
+    return result[0]
+
+
+# Returns True if the 'shrunk_url' exists in the database, False otherwise.
+def exists_shrunk(shrunk_url):
+    query = select([exists().where(url.c.shrunk_url == shrunk_url)])
+    result = get_db().execute(query).fetchone()
+    return result[0]
+
+
+# Inserts a shortened URL associated with a target URL into the database.
+# Returns True on success or False if it already exists.
+def insert_pair(shrunk_url, target_url):
+    exists = exists_shrunk(shrunk_url)
+    if exists is True:
+        print('Attempted to insert pair, but the shrunk_url \'{}\' already exists.'.format(shrunk_url))
+        return False
+    
+    exists = exists_target(target_url)
+    if exists is True:
+        print('Attempted to insert pair, but the target_url \'{}\' already exists.'.format(target_url))
+        return False
+
+    query = url.insert().values(
+            shrunk_url=shrunk_url,
+            target_url=target_url
+        )
+
+    get_db().execute(query)
+    print('Successfully inserted new pair ({}, {}) into database.'.format(shrunk_url, target_url))
+    return True
+
+
+# Deletes a the specified shortened URL and its associated target URL from the database.
+# Returns True on success or False if 'shrunk_url' does not exist in database.
+def delete_shrunk(shrunk_url):
+    result = exists_shrunk(shrunk_url)
+
+    if result is not True:
+        print('Failed to delete target \'{}\': Value does not exist in database.'.format(shrunk_url))
+        return False
+
+    query = url.delete().where(url.c.shrunk_url == shrunk_url)
+    result = get_db().execute(query)
+    print('Deleted shrunk_url \'{}\''.format(shrunk_url))
+    return True
+
+
+# Deletes a the specified target URL and its associated shortened URL from the database.
+# Returns True on success or False if 'target_url' does not exist in database.
+def delete_target(target_url):
+    result = exists_target(target_url)
+
+    if result is not True:
+        print('Failed to delete target \'{}\': Value does not exist in database.'.format(target_url))
+        return False
+
+    query = url.delete().where(url.c.target_url == target_url)
+    result = get_db().execute(query)
+    print('Deleted shrunk_url \'{}\''.format(target_url))
+    return True

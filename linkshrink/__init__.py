@@ -34,5 +34,6 @@ def create_app():
     with app.app_context():
         from . import database
         from . import routes
+        from . import commands
 
     return app
