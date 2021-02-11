@@ -1,4 +1,4 @@
-from flask import request, redirect, abort, current_app, g, render_template
+from flask import request, redirect, abort, current_app, render_template
 
 from . import shortener
 from . import database
@@ -21,6 +21,7 @@ def index_route():
         )
     else:
         return render_template('index.html')
+
 
 # Responsible for redirecting the user to the target_url
 # associated with the specified shrunk_url.

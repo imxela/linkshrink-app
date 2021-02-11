@@ -1,15 +1,6 @@
 import os
 
-from flask import Flask, request, redirect, abort, g
-
-from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, String, MetaData, select, exists
-
-
-def has_no_empty_params(rule):
-    defaults = rule.defaults if rule.defaults is not None else ()
-    arguments = rule.arguments if rule.arguments is not None else ()
-    return len(defaults) >= len(arguments)
+from flask import Flask
 
 
 # Factory function for creation and configuration of the app

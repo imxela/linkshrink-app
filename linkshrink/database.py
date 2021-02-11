@@ -109,7 +109,7 @@ def insert_pair(shrunk_url, target_url):
     if exists is True:
         print('Attempted to insert pair, but the shrunk_url \'{}\' already exists.'.format(shrunk_url))
         return False
-    
+
     exists = exists_target(target_url)
     if exists is True:
         print('Attempted to insert pair, but the target_url \'{}\' already exists.'.format(target_url))
