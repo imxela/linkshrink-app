@@ -76,6 +76,18 @@ def query_target_url(shrunk_url, default=None):
     return default
 
 
+# Returns the 'shrunk_url' associated with the specified 'target_url'.
+# Returns 'default' if 'target_url' does not exist in the database.
+def query_shrunk_url(target_url, default=None):
+    query = select([url.c.shrunk_url]).where(url.c.target_url == target_url)
+    result = get_db().execute(query).fetchone()
+
+    if result is not None:
+        return result[0]
+
+    return default
+
+
 # Returns True if the 'target_url' exists in the database, False otherwise.
 def exists_target(target_url):
     query = select([exists().where(url.c.target_url == target_url)])
