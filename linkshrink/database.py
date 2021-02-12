@@ -16,39 +16,11 @@ url = Table(
         )
 
 
-# Creates a shortened URL entry in the database for testing
-def create_testing_defaults():
-    from . import hash
-
-    default_target_url = 'https://www.google.com/'
-    default_shrunk_url = hash.generate_url_hash(default_target_url)
-
-    exists_query = select([url.c.target_url]).where(
-        url.c.shrunk_url == default_shrunk_url
-    )
-
-    s = exists(exists_query).select()
-    result = get_db().execute(s).fetchone()[0]
-
-    # Only add them if they do not exist
-    if result is False:
-        print('Database defaults created!')
-        insert_test = url.insert().values(
-            shrunk_url=default_shrunk_url,
-            target_url=default_target_url
-        )
-        result = get_db().execute(insert_test)
-    else:
-        print('Database defaults already exist.')
-
-
 # Creates a database connection
 def create_database():
     db_engine = create_engine(current_app.config['DATABASE_URL'])
     db_meta.create_all(db_engine)
     g.database = db_engine.connect()
-
-    create_testing_defaults()
 
     print('Database created!')
 
