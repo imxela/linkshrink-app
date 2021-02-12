@@ -5,10 +5,10 @@
 <body>
     <form action="{{ url_for('index_route') }}" method="post">
         <p>Link to shrink:</p>
-        <input type="url", name="target_url", placeholder="https://www.example.com/". value="{{ target_url }}", style="width: 300px">
-        <input type="submit", value="Press to Shrink">
+        <input type="url" name="target_url" placeholder="https://www.example.com/" value="{{ target_url }}" autocomplete="off" style="width: 300px">
+        <input type="submit" value="Press to Shrink">
 
         <p>Shrunken link:</p>
-        <input type="text", name="shrunk_url", placeholder="...", value="{{ shrunk_url }}", style="width: 300px">
+        <input type="text" name="shrunk_url" placeholder="..." value="{{ shrunk_url }}" style="width: 300px" readonly>
     </form>    
 </body>
