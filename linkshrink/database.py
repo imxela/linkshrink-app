@@ -18,8 +18,10 @@ url = Table(
 
 # Creates a shortened URL entry in the database for testing
 def create_testing_defaults():
-    default_shrunk_url = 'test'
+    from . import hash
+
     default_target_url = 'https://www.google.com/'
+    default_shrunk_url = hash.generate_url_hash(default_target_url)
 
     exists_query = select([url.c.target_url]).where(
         url.c.shrunk_url == default_shrunk_url
