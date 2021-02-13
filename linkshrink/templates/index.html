@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <head>
     <title>Linkshrink - Shrink your URLs!</title>
-</head>
-<body>
-    <form action="{{ url_for('index_route') }}" method="post">
-        <p>Link to shrink:</p>
-        <input type="url" name="target_url" placeholder="https://www.example.com/" value="{{ target_url }}" autocomplete="off" style="width: 300px">
-        <input type="submit" value="Press to Shrink">
 
-        <p>Shrunken link:</p>
-        <input type="text" name="shrunk_url" placeholder="..." value="{{ shrunk_url }}" style="width: 300px" readonly>
-    </form>    
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" 
+        rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" 
+        crossorigin="anonymous"
+    >
+
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container form-container">
+        <div class="row h-100 align-items-center">
+            <div class="col-md-6 mx-auto my-auto">
+                <form action="{{ url_for('index_route') }}" method="post">
+                    <div class="input-group mb-2">
+                        <input type="url" name="url-input" class="form-control url-input" placeholder="Type or paste your link here" value="{{ url_input_value }}" aria-label="url_input" aria-describedby="button-addon1">
+                        <button class="btn btn-outline-primary" type="submit" id="button-addon1">Shrink</button>
+                        <button class="btn btn-outline-secondary copy-link-button" type="button" id="button-addon2">Copy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
+
+<script src="{{url_for('static', filename='copy.js')}}"></script>

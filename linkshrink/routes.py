@@ -9,15 +9,14 @@ def index_route():
     if (request.method == 'POST'):
         print('POSTing @ index -- starting shrinking process')
 
-        target_url = request.form.get('target_url')
+        target_url = request.form.get('url-input')
 
         with current_app.app_context():
             shrunk_url = shortener.shrink_url(target_url)
 
         return render_template(
             'index.html',
-            shrunk_url=shrunk_url,
-            target_url=target_url
+            url_input_value=shrunk_url
         )
     else:
         return render_template('index.html')
