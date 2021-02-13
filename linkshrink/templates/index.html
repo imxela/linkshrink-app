@@ -17,7 +17,7 @@
             <div class="col-md-6 mx-auto my-auto">
                 <form action="{{ url_for('index_route') }}" method="post">
                     <div class="input-group mb-2">
-                        <input type="url" name="url-input" class="form-control url-input" placeholder="Type or paste your link here" value="{{ url_input_value }}" aria-label="url_input" aria-describedby="button-addon1">
+                        <input type="url" name="url-input" class="form-control url-input" placeholder="Type or paste your link here" value="{{ url_input_value }}" aria-label="url_input" aria-describedby="button-addon1" autocomplete="off">
                         <button class="btn btn-outline-primary" type="submit" id="button-addon1">Shrink</button>
                         <button class="btn btn-outline-secondary copy-link-button" type="button" id="button-addon2">Copy</button>
                     </div>
