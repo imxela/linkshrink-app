@@ -13,10 +13,10 @@ def index_route():
         target_url = request.form.get('url-input')
 
         with current_app.app_context():
-            shrunk_url = shortener.shrink_url(target_url)
+            url_hash = shortener.shrink_url(target_url)
 
         # Store shortened URL in session to save it when redirecting
-        session['url_input_value'] = shrunk_url
+        session['url_input_value'] = url_hash
         # Redirect to same page to prevent form resubmission
         return redirect(url_for('index_route'), 303)
     else:
@@ -32,11 +32,11 @@ def index_route():
 
 
 # Responsible for redirecting the user to the target_url
-# associated with the specified shrunk_url.
-# Aborts a 404 if the speicifed shrunk_url does not exist.
-@current_app.route('/<shrunk_url>')
-def redirect_route(shrunk_url):
-    url = database.query_target_url(shrunk_url)
+# associated with the specified url_hash.
+# Aborts a 404 if the speicifed url_hash does not exist.
+@current_app.route('/<url_hash>')
+def redirect_route(url_hash):
+    url = database.query_target_url(url_hash)
 
     if url is not None:
         return redirect(url, code=302)

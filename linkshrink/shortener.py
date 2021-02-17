@@ -32,7 +32,7 @@ def shrink_url(target_url):
     if database.exists_target(target_url):
         # The target URL already exists,
         # return shrunk URL instead of creating a new one
-        url_hash = database.query_shrunk_url(target_url)
+        url_hash = database.query_url_hash(target_url)
         print('\'{}\' already exists in database, using associated hash: \'{}\'!'.format(target_url, url_hash))
     else:
         url_hash = hash.generate_url_hash(target_url)

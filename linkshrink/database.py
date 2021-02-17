@@ -11,7 +11,7 @@ db_meta = MetaData()
 url = Table(
             'urls', db_meta,
             Column('id', Integer, primary_key=True),
-            Column('shrunk_url', String(35), unique=True, nullable=False),
+            Column('url_hash', String(35), unique=True, nullable=False),
             Column('target_url', String(2048), unique=True, nullable=False),
         )
 
@@ -38,10 +38,10 @@ def close_db(e):
         g.database.close()
 
 
-# Returns the 'target_url' associated with the specified 'shrunk_url'.
-# Returns 'default' if 'shrunk_url' does not exist in the database.
-def query_target_url(shrunk_url, default=None):
-    query = select([url.c.target_url]).where(url.c.shrunk_url == shrunk_url)
+# Returns the 'target_url' associated with the specified 'url_hash'.
+# Returns 'default' if 'url_hash' does not exist in the database.
+def query_target_url(url_hash, default=None):
+    query = select([url.c.target_url]).where(url.c.url_hash == url_hash)
     result = get_db().execute(query).fetchone()
 
     if result is not None:
@@ -50,10 +50,10 @@ def query_target_url(shrunk_url, default=None):
     return default
 
 
-# Returns the 'shrunk_url' associated with the specified 'target_url'.
+# Returns the 'url_hash' associated with the specified 'target_url'.
 # Returns 'default' if 'target_url' does not exist in the database.
-def query_shrunk_url(target_url, default=None):
-    query = select([url.c.shrunk_url]).where(url.c.target_url == target_url)
+def query_url_hash(target_url, default=None):
+    query = select([url.c.url_hash]).where(url.c.target_url == target_url)
     result = get_db().execute(query).fetchone()
 
     if result is not None:
@@ -69,19 +69,19 @@ def exists_target(target_url):
     return result[0]
 
 
-# Returns True if the 'shrunk_url' exists in the database, False otherwise.
-def exists_shrunk(shrunk_url):
-    query = select([exists().where(url.c.shrunk_url == shrunk_url)])
+# Returns True if the 'url_hash' exists in the database, False otherwise.
+def exists_shrunk(url_hash):
+    query = select([exists().where(url.c.url_hash == url_hash)])
     result = get_db().execute(query).fetchone()
     return result[0]
 
 
 # Inserts a shortened URL associated with a target URL into the database.
 # Returns True on success or False if it already exists.
-def insert_pair(shrunk_url, target_url):
-    exists = exists_shrunk(shrunk_url)
+def insert_pair(url_hash, target_url):
+    exists = exists_shrunk(url_hash)
     if exists is True:
-        print('Attempted to insert pair, but the shrunk_url \'{}\' already exists.'.format(shrunk_url))
+        print('Attempted to insert pair, but the url_hash \'{}\' already exists.'.format(url_hash))
         return False
 
     exists = exists_target(target_url)
@@ -90,27 +90,27 @@ def insert_pair(shrunk_url, target_url):
         return False
 
     query = url.insert().values(
-            shrunk_url=shrunk_url,
+            url_hash=url_hash,
             target_url=target_url
         )
 
     get_db().execute(query)
-    print('Successfully inserted new pair ({}, {}) into database.'.format(shrunk_url, target_url))
+    print('Successfully inserted new pair ({}, {}) into database.'.format(url_hash, target_url))
     return True
 
 
 # Deletes a the specified shortened URL and its associated target URL from the database.
-# Returns True on success or False if 'shrunk_url' does not exist in database.
-def delete_shrunk(shrunk_url):
-    result = exists_shrunk(shrunk_url)
+# Returns True on success or False if 'url_hash' does not exist in database.
+def delete_shrunk(url_hash):
+    result = exists_shrunk(url_hash)
 
     if result is not True:
-        print('Failed to delete target \'{}\': Value does not exist in database.'.format(shrunk_url))
+        print('Failed to delete target \'{}\': Value does not exist in database.'.format(url_hash))
         return False
 
-    query = url.delete().where(url.c.shrunk_url == shrunk_url)
+    query = url.delete().where(url.c.url_hash == url_hash)
     result = get_db().execute(query)
-    print('Deleted shrunk_url \'{}\''.format(shrunk_url))
+    print('Deleted pair \'{}\''.format(url_hash))
     return True
 
 
@@ -125,5 +125,5 @@ def delete_target(target_url):
 
     query = url.delete().where(url.c.target_url == target_url)
     result = get_db().execute(query)
-    print('Deleted shrunk_url \'{}\''.format(target_url))
+    print('Deleted pair \'{}\''.format(target_url))
     return True
