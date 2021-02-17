@@ -9,10 +9,15 @@ html, body, .container {
 }
 
 #alert-message {
-    margin: 10px;
     position: fixed;
-    top: 0;
-    left: 50%;
-    width: 33%;
-    transform: translateX(-50%);
+    width: 100%;
+    text-align: center;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.no-newline {
+    display: inline;
 }
