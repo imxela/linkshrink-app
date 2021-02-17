@@ -17,9 +17,8 @@ def index_route():
         # Make sure the user isn't trying to
         # shorten a linkto the current domain
         parsed = urlparse(target_url)
-        print('({}, {})'.format(parsed.netloc, request.url))
         if parsed.netloc in request.url:
-            flash('Shrinking links belonging to the linkshrink domain is not allowed.', 'danger')
+            flash('Shrinking links belonging to the linkshrink domain is not allowed!', 'danger')
             return redirect(url_for('index_route'), 303)
 
         with current_app.app_context():
