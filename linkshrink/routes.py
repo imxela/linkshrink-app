@@ -14,6 +14,10 @@ def index_route():
 
         target_url = request.form.get('url-input')
 
+        if not target_url:
+            flash('You can not shrink an empty URL; please enter a valid URL in the input field below!', 'danger')
+            return redirect(url_for('index_route'), 303)
+
         # Make sure the user isn't trying to
         # shorten a linkto the current domain
         parsed = urlparse(target_url)
