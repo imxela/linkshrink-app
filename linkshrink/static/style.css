@@ -5,4 +5,14 @@
 
 html, body, .container {
     height: 100%;
+    width: 100%;
+}
+
+#alert-message {
+    margin: 10px;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 33%;
+    transform: translateX(-50%);
 }

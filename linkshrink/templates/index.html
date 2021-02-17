@@ -8,22 +8,39 @@
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-<body>
-    <div class="container form-container">
-        <div class="row h-100 align-items-center">
-            <div class="col-md-6 mx-auto my-auto">
-                <form action="{{ url_for('index_route') }}" method="post">
-                    <div class="input-group mb-2">
-                        <input type="url" name="url-input" class="form-control url-input" placeholder="Type or paste your link here" value="{{ url_input_value }}" aria-label="url_input" aria-describedby="button-addon1" autocomplete="off" autofocus>
-                        <button class="btn btn-outline-primary" type="submit" id="button-addon1">Shrink</button>
-                        <button class="btn btn-outline-secondary copy-link-button" type="button" id="button-addon2">Copy</button>
-                    </div>
-                </form>
         <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    </head>
+
+    <body>
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div id="alert-message">
+            <div>
+                <div class="alert alert-{{ category }} alert-fixed alert-dismissible fade show" role="alert">
+                    {{ message }}
+
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-</body>
+        {% endfor %}
+        <div class="container form-container">
+            <div class="row h-100 align-items-center">
+                <div class="col-md-6 mx-auto my-auto">
+                    <form action="{{ url_for('index_route') }}" method="post">
+                        <div class="input-group mb-2">
+                            <input type="url" name="url-input" class="form-control url-input" placeholder="Type or paste your link here" value="{{ url_input_value }}" aria-label="url_input" aria-describedby="basic-addon2" autocomplete="off" autofocus>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-primary" type="submit">Shrink</button>
+                                <button class="btn btn-outline-secondary copy-link-button" type="button">Copy</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script src="{{url_for('static', filename='copy.js')}}"></script>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
