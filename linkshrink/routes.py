@@ -1,4 +1,4 @@
-from flask import request, redirect, abort, session, url_for
+from flask import request, redirect, abort, session, url_for, flash
 from flask import current_app, render_template
 
 from . import shortener
@@ -19,8 +19,8 @@ def index_route():
         parsed = urlparse(target_url)
         print('({}, {})'.format(parsed.netloc, request.url))
         if parsed.netloc in request.url:
-            # TODO: Display error on index page
-            return abort(400)
+            flash('Shrinking links belonging to the linkshrink domain is not allowed.', 'danger')
+            return redirect(url_for('index_route'), 303)
 
         with current_app.app_context():
             url_hash = shortener.shrink_url(target_url)
