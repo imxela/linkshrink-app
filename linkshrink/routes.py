@@ -1,4 +1,5 @@
-from flask import request, redirect, abort, current_app, render_template
+from flask import request, redirect, abort, session, url_for
+from flask import current_app, render_template
 
 from . import shortener
 from . import database
@@ -14,12 +15,20 @@ def index_route():
         with current_app.app_context():
             shrunk_url = shortener.shrink_url(target_url)
 
-        return render_template(
-            'index.html',
-            url_input_value=shrunk_url
-        )
+        # Store shortened URL in session to save it when redirecting
+        session['url_input_value'] = shrunk_url
+        # Redirect to same page to prevent form resubmission
+        return redirect(url_for('index_route'), 303)
     else:
-        return render_template('index.html')
+        # If user has generated a URL previously,
+        # retrieve it from session and display it
+        if 'url_input_value' in session:
+            return render_template(
+                'index.html',
+                url_input_value=session.pop('url_input_value')
+            )
+        else:
+            return render_template('index.html')
 
 
 # Responsible for redirecting the user to the target_url
