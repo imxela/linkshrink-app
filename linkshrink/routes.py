@@ -4,6 +4,8 @@ from flask import current_app, render_template
 from . import shortener
 from . import database
 
+from urllib.parse import urlparse
+
 
 @current_app.route('/', methods=['POST', 'GET'])
 def index_route():
@@ -11,6 +13,14 @@ def index_route():
         print('POSTing @ index -- starting shrinking process')
 
         target_url = request.form.get('url-input')
+
+        # Make sure the user isn't trying to
+        # shorten a linkto the current domain
+        parsed = urlparse(target_url)
+        print('({}, {})'.format(parsed.netloc, request.url))
+        if parsed.netloc in request.url:
+            # TODO: Display error on index page
+            return abort(400)
 
         with current_app.app_context():
             url_hash = shortener.shrink_url(target_url)
