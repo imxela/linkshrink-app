@@ -14,7 +14,7 @@ def create_app():
         DATABASE_URL=os.environ.get('DATABASE_URL'),
     )
 
-    print(app.config['DATABASE_URL'])
+    print('Database URI: '.format(app.config['DATABASE_URL']))
 
     # Create the instance folder
     try:
